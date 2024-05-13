@@ -160,17 +160,17 @@ var getPieceValue = function (piece, x, y) {
   }
   var getAbsoluteValue = function (piece, isWhite, x, y) {
     if (piece.type === "p") {
-      return 10 + (isWhite ? pawnEvalWhite[y][x] : pawnEvalBlack[y][x]);
+      return 10 + (isWhite ? pawnEvalWhite[x][y] : pawnEvalBlack[x][y]);
     } else if (piece.type === "r") {
-      return 50 + (isWhite ? rookEvalWhite[y][x] : rookEvalBlack[y][x]);
+      return 50 + (isWhite ? rookEvalWhite[x][y] : rookEvalBlack[x][y]);
     } else if (piece.type === "n") {
       return 30 + knightEval[y][x];
     } else if (piece.type === "b") {
-      return 30 + (isWhite ? bishopEvalWhite[y][x] : bishopEvalBlack[y][x]);
+      return 30 + (isWhite ? bishopEvalWhite[x][y] : bishopEvalBlack[x][y]);
     } else if (piece.type === "q") {
-      return 90 + evalQueen[y][x];
+      return 90 + evalQueen[x][y];
     } else if (piece.type === "k") {
-      return 900 + (isWhite ? kingEvalWhite[y][x] : kingEvalBlack[y][x]);
+      return 900 + (isWhite ? kingEvalWhite[x][y] : kingEvalBlack[x][y]);
     }
     throw "Unknown piece type: " + piece.type;
   };
@@ -200,28 +200,18 @@ var makeBestMove = function () {
     }
   }
   board.position(game.fen());
-  var advantage = evaluateBoard(game);
-  var message = "";
-  if (advantage > 0) {
-    message = "Trắng đang lợi thế hơn" + advantage.toFixed(2);
-  } else if (advantage < 0) {
-    message = "đen đang lợi thế hơn" + Math.abs(advantage).toFixed(2);
-  } else {
-    message = "Hòa!";
-  }
-  document.getElementById("message").innerHTML = message;
+  displayAdvantage();
 };
 
 var getBestMove = function (game) {
-  var depth = document.getElementById("search-depth").value;
-  console.log(depth);
+  var depth = document.getElementById("search-depth").value;  
   var bestMove = chooseBestMove(depth, game, true);
   return bestMove;
 };
 
 function displayAdvantage() {
   var advantage = evaluateBoard(game);
-
+  console.log(advantage)
   var message = "";
   if (advantage > 0) {
     message = "Trắng đang lợi thế hơn" + advantage.toFixed(2);
@@ -273,6 +263,8 @@ var cfg = {
 board = ChessBoard("board", cfg);
 $("#startBtn").on("click", board.start);
 $("#clearBtn").on("click", board.clear);
+
+displayAdvantage();
 
 const undo = document.getElementById("undo");
 undo.addEventListener("click", function () {
